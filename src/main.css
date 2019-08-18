@@ -1,0 +1,5 @@
+.theme--light.v-table thead th {
+  color: rgba(0, 0, 0, 0.9) !important;
+  font-size: 15px !important;
+  font-weight: bold !important;
+}

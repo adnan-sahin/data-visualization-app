@@ -13,6 +13,11 @@
                 color="secondary"
                 @click="downloadJsonFile"
               >Download JSON File</v-btn>
+              <v-btn
+                :disabled="items.length==0"
+                color="secondary"
+                @click="downloadYamlFile"
+              >Download YAML File</v-btn>
             </v-card-title>
             <v-flex md6 offset-md3>
               <v-text-field
@@ -46,7 +51,8 @@
 </template>
 <script>
 import Papa from "papaparse";
-import { ExportDataToJsonFile } from "../helpers";
+import { ExportDataToFile, ValidateURL } from "../helpers";
+import Json2Yaml from "json2yaml";
 export default {
   data() {
     return {
@@ -73,7 +79,11 @@ export default {
     },
     downloadJsonFile() {
       const data = JSON.stringify(this.items);
-      ExportDataToJsonFile(data);
+      ExportDataToFile(data, "json");
+    },
+    downloadYamlFile() {
+      const data = Json2Yaml.stringify(this.items);
+      ExportDataToFile(data, "yaml");
     },
     dataToJSON(data) {
       const lines = data;
@@ -87,12 +97,34 @@ export default {
         headers.map((header, indexHeader) => {
           obj[header] = line[indexHeader];
         });
+        const res = this.validateObject(obj);
+        if (res.error) {
+          alert(res.message);
+        }
         result.push(obj);
       });
 
       result.pop();
 
       return result;
+    },
+
+    validateObject(obj) {
+      const { name, stars, uri } = obj;
+
+      // if (unescape(encodeURIComponent(name)) != name) {
+      //   return { error: true, message: `name {${name}} contains not utf8 chracters!`};
+      // }
+      if (!(Number(stars) != NaN && Number.isInteger(Number(stars)))) {
+        return { error: true, message: "stars should be integer number!" };
+      }
+      if (!(stars >= 0 || stars <= 5)) {
+        return { error: true, message: "stars should be between 0 and 5!" };
+      }
+      if (!ValidateURL(uri)) {
+        return { error: true, message: "uri is not valid" };
+      }
+      return { error: false, message: "" };
     },
     loadData(e) {
       const vm = this;

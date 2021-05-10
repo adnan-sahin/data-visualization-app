@@ -11,7 +11,7 @@
     "babel-polyfill": "^6.26.0",
     "core-js": "^2.6.5",
     "json2yaml": "^1.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "papaparse": "^5.0.2",
     "vue": "^2.6.10",
     "vuetify": "^1.5.17"
